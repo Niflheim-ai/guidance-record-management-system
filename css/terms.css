@@ -1,0 +1,24 @@
+.main {
+    margin-top: 2%;
+}
+
+hr.separator {
+    border: 2px solid #17440e;
+    border-radius: 5px;
+    margin-bottom: 5%;
+}
+
+.title {
+    color: black;
+    font-weight: bold;
+}
+
+body {
+    background: rgb(255,255,255);
+    background: linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(110, 173, 61,1) 250%);
+    height: 100%;
+}
+
+ol li {
+    color: black;
+}
