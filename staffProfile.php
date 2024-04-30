@@ -152,9 +152,6 @@
                             <div class="account-information">
                                 <h4>Account Information</h4>
                                 <p><strong>Username: </strong><?php echo $username ?></p>
-                                <div class="p d-flex gap-2 justify-content-center">
-                                    <p><strong>Password: </strong></p><p class="password"><?php echo $password ?></p>
-                                </div>
                             </div>
                         </div>
                     </div>

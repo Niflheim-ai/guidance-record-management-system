@@ -11,6 +11,7 @@
 
     $queryLeave = "SELECT * FROM leave_of_absence";
     $resultLeave = mysqli_query($conn, $queryLeave);
+    $resultImage = mysqli_query($conn, $queryLeave);
 
     $totalLeaveRecord = getLeaveRecords($conn);
     $totalLeaveToday = getLeaveRecordsCurrentDay($conn);
@@ -229,6 +230,7 @@
                                                 <th class="text-center">Year</th>
                                                 <th class="text-center">Section</th>
                                                 <th class="text-center">Reason</th>
+                                                <th class="text-center">Documents</th>
                                                 <th class="text-center">Status</th>
                                                 <th class="text-center">Remarks</th>
                                                 <th class="text-center">Date Added</th>
@@ -239,15 +241,16 @@
                                             <tr>
                                                 <?php
                                                     while($row = mysqli_fetch_assoc($resultLeave)) {
-                                                        if ($row['status'] == 'Approved') {
-                                                            $bgColor = 'text-white badge bg-success';
-                                                        }
-                                                        else if ($row['status'] == 'Pending') {
-                                                            $bgColor = 'text-muted badge bg-warning';
-                                                        }
-                                                        else {
-                                                            $bgColor = 'text-white badge bg-danger';
-                                                        }
+                                                        while ($row = mysqli_fetch_array($resultImage)) {
+                                                            if ($row['status'] == 'Approved') {
+                                                                $bgColor = 'text-white badge bg-success';
+                                                            }
+                                                            else if ($row['status'] == 'Pending') {
+                                                                $bgColor = 'text-muted badge bg-warning';
+                                                            }
+                                                            else {
+                                                                $bgColor = 'text-white badge bg-danger';
+                                                            }
                                                 ?>
 
                                                 <td class="text-center"><?php echo $row['record_ID']?></td>
@@ -259,11 +262,28 @@
                                                 <td class="text-center"><?php echo $row['year']?></td>
                                                 <td class="text-center"><?php echo $row['section']?></td>
                                                 <td class="text-center"><?php echo $row['reason']?></td>
+                                                <td class="text-center">
+                                                    <?php
+                                                        $imagePath = 'images/' . $row['document'];
+
+                                                        if (file_exists($imagePath . '.jpg')) {
+                                                            echo  '<img src="' . $imagePath . '.jpg" class="img-fluid w-25 rounded-3" onclick="viewImage(\'' . $imagePath . '.jpg\')">';
+                                                        }
+                                                        elseif (file_exists($imagePath . '.png')) {
+                                                            echo '<img src="' . $imagePath . '.png" class="img-fluid w-25 rounded-3" onclick="viewImage(\'' . $imagePath . '.png\')">';
+                                                        }
+                                                        else {
+                                                            echo '<img src="./images/' . $row['document'] . '" class="img-fluid w-25 rounded-3" alt="Default Image" onclick="viewImage(\'' . $imagePath . '\')">';
+                                                        }
+
+                                                    ?>
+                                                </td>
                                                 <td class="text-center"><span class="<?php echo $bgColor ?>"><?php echo $row['status']?></span></td>
                                                 <td class="text-center"><?php echo $row['remarks']?></td>
                                                 <td class="text-center"><?php echo date('M d Y', strtotime($row['date']))?></td>
                                             </tr>
                                             <?php
+                                                    }
                                                 }
                                             ?>
                                         </tbody>
@@ -338,7 +358,7 @@
                     <a type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></a>
                 </div>
                 <div class="modal-body">
-                    <form action="#" method="POST" class="form">
+                    <form action="#" method="POST" class="form" enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="record_firstName" class="mb-3">Personal Details</label>
                             <input id="record_firstName" name="record_firstName" placeholder="First Name" type="text" required="required" class="form-control mb-3">
@@ -352,7 +372,8 @@
                         <div class="form-group mb-3">
                             <label for="record_gender" class="mb-3">Gender</label>
                             <div>
-                                <select id="record_gender" name="record_gender" class="form-select" placeholder="Gender" aria-describedby="record_genderHelpBlock">
+                                <select id="record_gender" name="record_gender" class="form-select" placeholder="Gender" aria-describedby="record_genderHelpBlock" required="required">
+                                    <option value="" selected hidden>-Select Gender-</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
                                     <option value="Binary">Binary</option>
@@ -364,8 +385,8 @@
                         <div class="form-group mb-3">
                             <label for="record_department" class="mb-3">Course</label>
                             <div>
-                                <select id="record_department" name="record_department" class="form-select" aria-describedby="record_departmentHelpBlock">
-                                    <option value="N/A">N/A</option>
+                                <select id="record_department" name="record_department" class="form-select" aria-describedby="record_departmentHelpBlock" required="required">
+                                    <option value="" selected hidden>-Select Course-</option>
                                     <option value="Information System">Information System</option>
                                     <option value="Civil Engineering">Civil Engineering</option>
                                     <option value="Nursing">Nursing</option>
@@ -378,8 +399,8 @@
                         <div class="form-group mb-3">
                             <label for="record_year" class="mb-3">Year</label>
                             <div>
-                                <select id="record_year" name="record_year" class="form-select" aria-describedby="record_yearHelpBlock">
-                                    <option value="N/A">N/A</option>
+                                <select id="record_year" name="record_year" class="form-select" aria-describedby="record_yearHelpBlock" required="required">
+                                    <option value="" selected hidden>-Select Year Level-</option>
                                     <option value="1st Year">1st Year</option>
                                     <option value="2nd Year">2nd Year</option>
                                     <option value="3rd Year">3rd Year</option>
@@ -398,9 +419,15 @@
                             <input id="record_reason" name="record_reason" type="text" class="form-control" aria-describedby="record_reasonHelpBlock" required="required">
                         </div>
                         <div class="form-group mb-3">
+                            <label for="record_documents" class="mb-3">Documents</label>
+                            <input id="record_documents" name="record_documents" placeholder="Document Image File Name" type="file" class="form-control" required="required" aria-describedby="record_documentHelpBlock"> 
+                            <span id="record_documentHelpBlock" class="form-text text-muted">Preferably 2048 x 2048</span>
+                        </div>
+                        <div class="form-group mb-3">
                             <label for="record_status" class="mb-3">Status</label>
                             <div>
                                 <select id="record_status" name="record_status" class="form-select" aria-describedby="record_statusHelpBlock">
+                                    <option value="" selected hidden>-Select Status-</option>
                                     <option value="Approved">Approved</option>
                                     <option value="Pending">Pending</option>
                                     <option value="Rejected">Rejected</option>
@@ -409,7 +436,7 @@
                         </div>
                         <div class="form-group mb-3">
                             <label for="record_remarks" class="mb-3">Remarks</label>
-                            <input id="record_remarks" name="record_remarks" type="text" class="form-control" aria-describedby="record_remarksHelpBlock" required="required">
+                            <input id="record_remarks" name="record_remarks" type="text" class="form-control" aria-describedby="record_remarksHelpBlock">
                         </div>
                         <div class="form-group">
                             <div class="col-3 d-grid offset-9">
@@ -485,6 +512,7 @@
                             <label for="record_gender" class="mb-3">Gender</label>
                             <div>
                                 <select id="record_gender" name="record_gender" class="form-select" placeholder="Gender" aria-describedby="record_genderHelpBlock">
+                                    <option value="" selected hidden>Select Gender</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
                                     <option value="Binary">Binary</option>
@@ -533,6 +561,7 @@
                             <label for="record_status" class="mb-3">Status</label>
                             <div>
                                 <select id="record_status" name="record_status" class="form-select" aria-describedby="record_statusHelpBlock">
+                                    <option value="" selected hidden>Select Status</option>
                                     <option value="Approved">Approved</option>
                                     <option value="Pending">Pending</option>
                                     <option value="Rejected">Rejected</option>
@@ -587,6 +616,18 @@
             iDisplayLength: -1
         });
     </script> -->
+
+    <script>
+        function viewImage(imagePath) {
+            Swal.fire({
+                title: "Viewing Document",
+                imageUrl: imagePath,
+                imageAlt: "Document Image",
+                showCloseButton: true,
+                showConfirmButton: false
+            });
+        }
+    </script>
 
     <script>
         function confirmLogout() {

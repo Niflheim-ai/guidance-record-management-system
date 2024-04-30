@@ -128,26 +128,22 @@
     <section class="services" id="services">
         <div class="container">
             <div class="row pt-5 pb-5">
-                <div class="col-lg-8 m-auto">
+                <div class="col-lg-8 col-md-12 mx-auto">
                     <center>
                         <h1><b>Our Services</b></h1>
                     </center>
                     <div class="row text-center d-flex mt-3">
-                        <div class="col-3">
+                        <div class="col-lg-4">
                             <img class="img img-fluid" src="images/counselling.png" alt="Counseling">
                             <p class="h5 mt-4">Counseling</p>
                         </div>
-                        <div class="col-3">
+                        <div class="col-lg-4">
                             <img class="img img-fluid" src="images/notes.png" alt="Filing">
                             <p class="h5 mt-4">Filing LOA</p>
                         </div>
-                        <div class="col-3">
+                        <div class="col-lg-4">
                             <img class="img img-fluid" src="images/notes.png" alt="Absence">
                             <p class="h5 mt-4">Absence Approval Form</p>
-                        </div>
-                        <div class="col-3">
-                            <img class="img img-fluid" src="images/other.png" alt="Absence">
-                            <p class="h5 mt-4">Other</p>
                         </div>
                     </div>
                 </div>

@@ -34,18 +34,18 @@
     $totalOtherRecordToday = getOtherRecordsCurrentDay($conn);
 
     $totalLeaveRecordMonth = getLeaveRecordsCurrentMonth($conn);
-    $totalCounsellingRecordMonth = getCounsellingRecordsCurrentMonth($conn);
+    $totalAbsenceRecordMonth = getAbsenceRecordsCurrentMonth($conn);
     $totalCounsellingRecordMonth = getCounsellingRecordsCurrentMonth($conn);
     $totalOtherRecordMonth = getOtherRecordsCurrentMonth($conn);
     
     
 
     $totalRecordDay = $totalLeaveRecordToday + $totalCounsellingRecordToday + $totalAbsenceRecordToday + $totalOtherRecordToday;
-    $totalRecordMonth = $totalLeaveRecordMonth + $totalCounsellingRecordMonth + $totalAbsenceRecordToday + $totalOtherRecordMonth;
+    $totalRecordMonth = $totalLeaveRecordMonth + $totalCounsellingRecordMonth + $totalAbsenceRecordMonth + $totalOtherRecordMonth;
 
     
 
-    $overallRecords = $totalLeaveRecord + $totalCounsellingRecord + $totalAbsenceRecordToday + $totalOtherRecord;
+    $overallRecords = $totalLeaveRecord + $totalCounsellingRecord + $totalAbsenceRecord + $totalOtherRecord;
 ?>
 
 <!DOCTYPE html>

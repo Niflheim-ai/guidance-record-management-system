@@ -248,6 +248,8 @@
     
     function addLeaveRecord($conn) {
         if (isset($_POST['addRecord'])) {
+            $document = $_FILES['record_documents']['name'];
+            $tempDocument = $_FILES['record_documents']['tmp_name'];
             $firstName = $_POST['record_firstName'];
             $middleName = $_POST['record_middleName'];
             $lastName = $_POST['record_lastName'];
@@ -264,6 +266,10 @@
                 echo '<script>alert("Please fill all required fields")</script>';
                 exit();
             }
+
+            $fileExtension = pathinfo($document, PATHINFO_EXTENSION);
+            $recordDocumentWithoutExtension = pathinfo($document, PATHINFO_FILENAME);
+            move_uploaded_file($tempDocument, './images/'.$document);
     
             // Get the next ID for leave_of_absence
             $query = "SELECT COALESCE(MAX(CAST(SUBSTRING(record_ID, 2) AS UNSIGNED)), 0) + 1 AS max_id FROM leave_of_absence";
@@ -275,8 +281,8 @@
             $formattedID = 'L' . str_pad($nextID, 4, '0', STR_PAD_LEFT);
     
             // Inserting record with formatted ID
-            $insertRecord = "INSERT INTO leave_of_absence (record_ID, firstName, middleName, lastName, gender, department, year, section, reason, status, remarks, date)
-            VALUES ('$formattedID', '$firstName', '$middleName', '$lastName', '$gender', '$department', '$year', '$section', '$reason', '$status', '$remarks', NOW())";
+            $insertRecord = "INSERT INTO leave_of_absence (record_ID, firstName, middleName, lastName, gender, department, year, section, reason, document, status, remarks, date)
+            VALUES ('$formattedID', '$firstName', '$middleName', '$lastName', '$gender', '$department', '$year', '$section', '$reason', '$recordDocumentWithoutExtension', '$status', '$remarks', NOW())";
     
             $resultQuery = mysqli_query($conn, $insertRecord);
     
@@ -284,12 +290,22 @@
                 if (isset($_SESSION['adminSession'])) {
                     echo '<script>
                         Swal.fire({
-                            title: "Success",
-                            text: "Record added successfully",
-                            icon: "success"
+                            title: "Are you sure?",
+                            text: "Are you sure you want to add this record?",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, add it!"
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.href = "admin-records-loa.php";
+                                Swal.fire({
+                                    title: "Success",
+                                    text: "Record added successfully",
+                                    icon: "success"
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "admin-records-loa.php";
+                                    }
+                                });
                             }
                         });
                     </script>';
@@ -297,12 +313,22 @@
                 else {
                     echo '<script>
                         Swal.fire({
-                            title: "Success",
-                            text: "Record added successfully",
-                            icon: "success"
+                            title: "Are you sure?",
+                            text: "Are you sure you want to add this record?",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, add it!"
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.href = "records-loa.php";
+                                Swal.fire({
+                                    title: "Success",
+                                    text: "Record added successfully",
+                                    icon: "success"
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "records-loa.php";
+                                    }
+                                });
                             }
                         });
                     </script>';
@@ -1313,78 +1339,93 @@
                         $inputContactNum = $_POST['contactNum'];
                         $inputUsername = $_POST['username'];
                         $inputPassword = $_POST['password'];
+                        $inputConfirmPassword = $_POST['confirmPassword'];
 
                         $checkUsername = mysqli_query($conn, "SELECT username FROM staff WHERE username = '$inputUsername'");
                         $numberOfUser = mysqli_num_rows($checkUsername);
 
                         if ($numberOfUser < 1) {
-                            $hashPassword = password_hash($inputPassword,  PASSWORD_BCRYPT, array('cost' => 12));
+                            // Check password match
+                            if ($inputPassword == $inputConfirmPassword) {
+                                $hashPassword = password_hash($inputPassword,  PASSWORD_BCRYPT, array('cost' => 12));
 
-                            $saveRecord = $conn->prepare("INSERT INTO `staff` (`staff_ID`, `staff_firstName`, `staff_middleName`, `staff_lastName`, `staff_contactNum`, `username`, `password`)
-                            VALUES ('', ?, ?, ?, ?, ?, ?)");
+                                $saveRecord = $conn->prepare("INSERT INTO `staff` (`staff_ID`, `staff_firstName`, `staff_middleName`, `staff_lastName`, `staff_contactNum`, `username`, `password`)
+                                VALUES ('', ?, ?, ?, ?, ?, ?)");
 
-                            $saveRecord->bind_param("ssssss", $inputFirstName, $inputMiddleName, $inputLastName, $inputContactNum, $inputUsername, $hashPassword);
+                                $saveRecord->bind_param("ssssss", $inputFirstName, $inputMiddleName, $inputLastName, $inputContactNum, $inputUsername, $hashPassword);
 
-                            if ($saveRecord->errno) {
-                                echo '<script>
-                                    Swal.fire({
-                                        title: "Error",
-                                        text: "Account creation failed",
-                                        icon: "error"
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            window.location.href = "createAccount.php";
-                                        }
-                                    });
-                                </script>';
+                                if ($saveRecord->errno) {
+                                    echo '<script>
+                                        Swal.fire({
+                                            title: "Error",
+                                            text: "Account creation failed",
+                                            icon: "error"
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = "createAccount.php";
+                                            }
+                                        });
+                                    </script>';
+                                }
+                                else {
+                                    echo '<script>
+                                        Swal.fire({
+                                            title: "Success",
+                                            text: "Account successfully created",
+                                            icon: "success"
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = "createAccount.php";
+                                            }
+                                        });
+                                    </script>';
+
+                                    $saveRecord->execute();
+                                    $saveRecord->close();
+                                    $conn->close();
+                                }
                             }
                             else {
                                 echo '<script>
-                                    Swal.fire({
-                                        title: "Success",
-                                        text: "Account successfully created",
-                                        icon: "success"
-                                    }).then((result) => {
-                                        if (result.isConfirmed) {
-                                            window.location.href = "createAccount.php";
-                                        }
-                                    });
-                                </script>';
-
-                                $saveRecord->execute();
-                                $saveRecord->close();
-                                $conn->close();
+                                Swal.fire({
+                                    title: "Error",
+                                    text: "Password did not match",
+                                    icon: "error"
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "createAccount.php";
+                                    }
+                                });
+                            </script>';
                             }
                         }
                     }
                     else {
-                        echo '<script>alert("username already exists")</script>';
-                        // echo '<script>
-                        //     Swal.fire({
-                        //         title: "Error",
-                        //         text: "Username already exist",
-                        //         icon: "error"
-                        //     }).then((result) => {
-                        //         if (result.isConfirmed) {
-                        //             window.location.href = "createAccount.php";
-                        //         }
-                        //     });
-                        // </script>';
+                        echo '<script>
+                            Swal.fire({
+                                title: "Error",
+                                text: "Username already exist",
+                                icon: "error"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = "createAccount.php";
+                                }
+                            });
+                        </script>';
                     }
                 }
                 else {
-                    echo '<script>alert("no special characters allowed")</script>';
-                    // echo '<script>
-                    //     Swal.fire({
-                    //         title: "Error",
-                    //         text: "No special characters allowed",
-                    //         icon: "error"
-                    //     }).then((result) => {
-                    //         if (result.isConfirmed) {
-                    //             window.location.href = "createAccount.php";
-                    //         }
-                    //     });
-                    // </script>';
+                    echo '<script>
+                        Swal.fire({
+                            title: "Error",
+                            text: "No special characters allowed",
+                            icon: "error"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "createAccount.php";
+                            }
+                        });
+                    </script>';
                 }
             }
             else {

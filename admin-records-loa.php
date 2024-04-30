@@ -11,6 +11,7 @@
 
     $queryLeave = "SELECT * FROM leave_of_absence";
     $resultLeave = mysqli_query($conn, $queryLeave);
+    $resultImage = mysqli_query($conn, $queryLeave);
 
     $totalLeaveRecord = getLeaveRecords($conn);
     $totalLeaveToday = getLeaveRecordsCurrentDay($conn);
@@ -241,6 +242,7 @@
                                                 <th class="text-center">Year</th>
                                                 <th class="text-center">Section</th>
                                                 <th class="text-center">Reason</th>
+                                                <th class="text-center">Document</th>
                                                 <th class="text-center">Status</th>
                                                 <th class="text-center">Remarks</th>
                                                 <th class="text-center">Date Added</th>
@@ -251,16 +253,17 @@
                                             <tr>
                                                 <?php
                                                     while($row = mysqli_fetch_assoc($resultLeave)) {
-                                                        $recordID = $row['record_ID'];
-                                                        if ($row['status'] == 'Approved') {
-                                                            $bgColor = 'text-white badge bg-success';
-                                                        }
-                                                        else if ($row['status'] == 'Pending') {
-                                                            $bgColor = 'text-muted badge bg-warning';
-                                                        }
-                                                        else {
-                                                            $bgColor = 'text-white badge bg-danger';
-                                                        }
+                                                        while ($row = mysqli_fetch_array($resultImage)) {
+                                                            $recordID = $row['record_ID'];
+                                                            if ($row['status'] == 'Approved') {
+                                                                $bgColor = 'text-white badge bg-success';
+                                                            }
+                                                            else if ($row['status'] == 'Pending') {
+                                                                $bgColor = 'text-muted badge bg-warning';
+                                                            }
+                                                            else {
+                                                                $bgColor = 'text-white badge bg-danger';
+                                                            }
                                                 ?>
 
                                                 <td class="text-center"><?php echo $row['record_ID']?></td>
@@ -272,12 +275,29 @@
                                                 <td class="text-center"><?php echo $row['year']?></td>
                                                 <td class="text-center"><?php echo $row['section']?></td>
                                                 <td class="text-center"><?php echo $row['reason']?></td>
+                                                <td class="text-center">
+                                                    <?php
+                                                        $imagePath = 'images/' . $row['document'];
+
+                                                        if (file_exists($imagePath . '.jpg')) {
+                                                            echo  '<img src="' . $imagePath . '.jpg" class="img-fluid w-25 rounded-3" onclick="viewImage(\'' . $imagePath . '.jpg\')">';
+                                                        }
+                                                        elseif (file_exists($imagePath . '.png')) {
+                                                            echo '<img src="' . $imagePath . '.png" class="img-fluid w-25 rounded-3" onclick="viewImage(\'' . $imagePath . '.png\')">';
+                                                        }
+                                                        else {
+                                                            echo '<img src="./images/' . $row['document'] . '" class="img-fluid w-25 rounded-3" alt="No Document Uploaded" onclick="viewImage(\'' . $imagePath . '\')">';
+                                                        }
+
+                                                    ?>
+                                                </td>
                                                 <td class="text-center"><span class="<?php echo $bgColor ?>"><?php echo $row['status']?></span></td>
                                                 <td class="text-center"><?php echo $row['remarks']?></td>
                                                 <td class="text-center"><?php echo date('M d Y', strtotime($row['date']))?></td>
                                                 <td><a href="edit-leaveRecord.php?record_ID=<?php echo $recordID ?>" type="button" class="btn btn-warning edit-record-btn">Edit</a></td>
                                             </tr>
                                             <?php
+                                                    }
                                                 }
                                             ?>
                                         </tbody>
@@ -603,6 +623,18 @@
             iDisplayLength: -1
         });
     </script> -->
+
+    <script>
+        function viewImage(imagePath) {
+            Swal.fire({
+                title: "Viewing Document",
+                imageUrl: imagePath,
+                imageAlt: "Document Image",
+                showCloseButton: true,
+                showConfirmButton: false
+            });
+        }
+    </script>
 
     <script>
         function confirmLogout() {

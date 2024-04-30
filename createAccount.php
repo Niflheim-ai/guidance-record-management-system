@@ -279,7 +279,7 @@
                             <input id="lastName" name="lastName" placeholder="Last Name" type="text" required="required" class="form-control">
                         </div>
                         <div class="form-group mb-3">
-                            <input id="contactNum" name="contactNum" placeholder="Contact Number (Optional)" type="text" class="form-control">
+                            <input id="contactNum" name="contactNum" placeholder="Contact Number" type="text" class="form-control" required="required">
                         </div>
                         <div class="form-group mb-3">
                             <label for="username" class="mb-3">Account</label>
@@ -287,6 +287,9 @@
                         </div>
                         <div class="form-group mb-3">
                             <input id="password" name="password" placeholder="Password" type="password" required="required" class="form-control">
+                        </div>
+                        <div class="form-group mb-3">
+                            <input id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" type="password" required="required" class="form-control">
                         </div>
                         <div class="form-group">
                             <div class="col-3 d-grid offset-9">
