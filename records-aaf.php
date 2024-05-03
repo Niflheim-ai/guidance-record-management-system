@@ -36,6 +36,7 @@
     <link rel="stylesheet" href="assets/DataTables/css/dataTables.dataTables.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/records-loa.css">
+    <link rel="icon" type="image/x-icon" href="images/kld-logo.png">
     <title>GRMS - Absence</title>
 
     <style>
@@ -210,6 +211,9 @@
                                 <p class="h3">Record Table</p>
                             </div>
                             <div class="card-body">
+                                <form action="export-pdf.php" method="POST">
+                                    <input type="submit" name="exportaaf" class="btn btn-outline-primary d-flex ms-auto mb-3" value="Export as PDF">
+                                </form>
                                 <div class="table-responsive">
                                     <table id="aaf-table" class="table table-striped data-table text-center" style="width: 100%">
                                         <thead>

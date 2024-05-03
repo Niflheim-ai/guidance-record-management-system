@@ -409,12 +409,22 @@
                 if (isset($_SESSION['adminSession'])) {
                     echo '<script>
                         Swal.fire({
-                            title: "Success",
-                            text: "Record added successfully",
-                            icon: "success"
+                            title: "Are you sure?",
+                            text: "Are you sure you want to add this record?",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, add it!"
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.href = "admin-records-counselling.php";
+                                Swal.fire({
+                                    title: "Success",
+                                    text: "Record added successfully",
+                                    icon: "success"
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "admin-records-counselling.php";
+                                    }
+                                });
                             }
                         });
                     </script>';
@@ -422,12 +432,22 @@
                 else {
                     echo '<script>
                         Swal.fire({
-                            title: "Success",
-                            text: "Record added successfully",
-                            icon: "success"
+                            title: "Are you sure?",
+                            text: "Are you sure you want to add this record?",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, add it!"
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.href = "counselling-records.php";
+                                Swal.fire({
+                                    title: "Success",
+                                    text: "Record added successfully",
+                                    icon: "success"
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "records-counselling.php";
+                                    }
+                                });
                             }
                         });
                     </script>';
@@ -510,12 +530,22 @@
                 if (isset($_SESSION['adminSession'])) {
                     echo '<script>
                         Swal.fire({
-                            title: "Success",
-                            text: "Record added successfully",
-                            icon: "success"
+                            title: "Are you sure?",
+                            text: "Are you sure you want to add this record?",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, add it!"
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.href = "admin-records-aaf.php";
+                                Swal.fire({
+                                    title: "Success",
+                                    text: "Record added successfully",
+                                    icon: "success"
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "admin-records-aaf.php";
+                                    }
+                                });
                             }
                         });
                     </script>';
@@ -523,12 +553,22 @@
                 else {
                     echo '<script>
                         Swal.fire({
-                            title: "Success",
-                            text: "Record added successfully",
-                            icon: "success"
+                            title: "Are you sure?",
+                            text: "Are you sure you want to add this record?",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, add it!"
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.href = "records-aaf.php";
+                                Swal.fire({
+                                    title: "Success",
+                                    text: "Record added successfully",
+                                    icon: "success"
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "records-aaf.php";
+                                    }
+                                });
                             }
                         });
                     </script>';
@@ -779,12 +819,22 @@
                 if (isset($_SESSION['adminSession'])) {
                     echo '<script>
                         Swal.fire({
-                            title: "Success",
-                            text: "Record added successfully",
-                            icon: "success"
+                            title: "Are you sure?",
+                            text: "Are you sure you want to add this record?",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, add it!"
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.href = "admin-records-other.php";
+                                Swal.fire({
+                                    title: "Success",
+                                    text: "Record added successfully",
+                                    icon: "success"
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "admin-records-other.php";
+                                    }
+                                });
                             }
                         });
                     </script>';
@@ -792,12 +842,22 @@
                 else {
                     echo '<script>
                         Swal.fire({
-                            title: "Success",
-                            text: "Record added successfully",
-                            icon: "success"
+                            title: "Are you sure?",
+                            text: "Are you sure you want to add this record?",
+                            icon: "warning",
+                            showCancelButton: true,
+                            confirmButtonText: "Yes, add it!"
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.href = "records-other.php";
+                                Swal.fire({
+                                    title: "Success",
+                                    text: "Record added successfully",
+                                    icon: "success"
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "records-other.php";
+                                    }
+                                });
                             }
                         });
                     </script>';
@@ -876,10 +936,27 @@
                             , status = '$newStatus', remarks = '$newRemarks' WHERE record_ID = '$recordID'";
 
             if (mysqli_query($conn, $updateLeave)) {
-                echo '<script> alert ("Record has been successfully updated")</script>';
-                
-                header("Location: admin-records-loa.php");
-                exit();
+                echo '<script>
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "Are you sure you want to edit this record?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Yes, save it!"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire({
+                                title: "Success",
+                                text: "Record edited successfully",
+                                icon: "success"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = "admin-records-loa.php";
+                                }
+                            });
+                        }
+                    });
+                </script>';
             }
             else {
                 echo '<script> alert ("Error updating record") </script>';

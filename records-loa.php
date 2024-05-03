@@ -217,7 +217,10 @@
                                 <p class="h3">Record Table</p>
                             </div>
                             <div class="card-body">
-                                <div class="table-responsive">
+                                <form action="export-pdf.php" method="POST">
+                                    <input type="submit" name="exportloa" class="btn btn-outline-primary d-flex ms-auto mb-3" value="Export as PDF">
+                                </form>
+                                <div id="divLoa" class="table-responsive">
                                     <table id="loa-table" class="table table-striped data-table text-center" style="width: 100%">
                                         <thead>
                                             <tr>
@@ -583,6 +586,13 @@
         </div>
     </div>
 
+    <!-- JS PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.15/jspdf.plugin.autotable.min.js"></script>
+    <!-- PDFMake -->
+    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script> -->
     <!-- Bootstrap JS -->
     <script src="js/bootstrap.min.js"></script>
     <!-- Custom JS -->
@@ -650,6 +660,56 @@
     </script>
 
     <?php addLeaveRecord($conn); ?>
+
+    <script>
+        // Wait for the DOM content to load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Add event listener to the button
+            document.getElementById('pdfButton').addEventListener('click', exportPDF);
+        });
+
+        // Define the exportPDF function
+        function exportPDF() {
+            var pdf = new jsPDF('p', 'pt', 'letter');
+            // source can be HTML-formatted string, or a reference
+            // to an actual DOM element from which the text will be scraped.
+            source = document.getElementById('divLoa');
+
+            // we support special element handlers. Register them with jQuery-style 
+            // ID selector for either ID or node name. ("#iAmID", "div", "span" etc.)
+            // There is no support for any other type of selectors 
+            // (class, of compound) at this time.
+            specialElementHandlers = {
+                // element with id of "bypass" - jQuery style selector
+                '#bypassme': function (element, renderer) {
+                    // true = "handled elsewhere, bypass text extraction"
+                    return true;
+                }
+            };
+            margins = {
+                top: 80,
+                bottom: 60,
+                left: 40,
+                width: 522
+            };
+            // all coords and widths are in jsPDF instance's declared units
+            // 'inches' in this case
+            pdf.fromHTML(
+                source, // HTML string or DOM elem ref.
+                margins.left, // x coord
+                margins.top, {
+                    // y coord
+                    'width': margins.width, // max width of content on PDF
+                    'elementHandlers': specialElementHandlers
+                },
+
+                function (dispose) {
+                    // dispose: object with X, Y of the last line add to the PDF 
+                    //          this allow the insertion of new lines after html
+                    pdf.save('LOA_REPORT.pdf');
+                }, margins);
+        }
+    </script>
 
     <script>
         $(document).ready(function () {
