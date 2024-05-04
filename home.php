@@ -43,7 +43,8 @@
     $totalRecordDay = $totalLeaveRecordToday + $totalCounsellingRecordToday + $totalAbsenceRecordToday + $totalOtherRecordToday;
     $totalRecordMonth = $totalLeaveRecordMonth + $totalCounsellingRecordMonth + $totalAbsenceRecordMonth + $totalOtherRecordMonth;
 
-    
+    $getRecordsToday = getTodayRecords($conn);
+    $getRecordsMonth = getMonthRecords($conn);
 
     $overallRecords = $totalLeaveRecord + $totalCounsellingRecord + $totalAbsenceRecord + $totalOtherRecord;
 ?>
@@ -187,6 +188,7 @@
                     </div></a>
 
                     <div class="col-lg-4 col-md-6 col-sm-8 mb-4">
+                        <a href="#today-table">
                         <div class="card w-100 mx-auto">
                             <div class="card-header statistics" style="background-color: rgba(211, 183, 23, 0.5)">
                                 <p class="fw-bold h4 d-flex justify-content-center">Records This Day</p>
@@ -198,9 +200,10 @@
                                 <span class="text-muted d-flex justify-content-center">Total # of Records</span>
                             </div>
                         </div>
-                    </div>
+                    </div></a>
 
                     <div class="col-lg-4 col-md-6 col-sm-8 mb-4">
+                        <a href="#month-table">
                         <div class="card w-100 mx-auto">
                             <div class="card-header statistics" style="background-color: rgba(211, 183, 23, 0.5)">
                                 <p class="fw-bold h4 d-flex justify-content-center">Records This Month</p>
@@ -212,7 +215,7 @@
                                 <span class="text-muted d-flex justify-content-center">Total # of Records</span>
                             </div>
                         </div>
-                    </div>
+                    </div></a>
 
                     <div class="col-lg-3 col-md-6 col-sm-8 mb-4">
                         <a href="#loa-table"><div class="card w-100 mx-auto">
@@ -328,6 +331,142 @@
                                                 </tr>
                                                 <?php
                                                     }
+                                                ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Records Today Table -->
+                        <div class="row mx-auto mb-3">
+                            <div class="card text-center">
+                                <div class="card-header d-flex justify-content-between mb-n5">
+                                    <p class="h3">Records This Day <?php echo '('. date('F j, Y'). ')'; ?></p>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table table-responsive">
+                                        <table id="today-table" class="table table-striped data-table text-center" style="width: 100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">Record ID</th>
+                                                    <th class="text-center">First Name</th>
+                                                    <th class="text-center">Middle Name</th>
+                                                    <th class="text-center">Last Name</th>
+                                                    <th class="text-center">Gender</th>
+                                                    <th class="text-center">Course</th>
+                                                    <th class="text-center">Year</th>
+                                                    <th class="text-center">Section</th>
+                                                    <th class="text-center">Reason</th>
+                                                    <th class="text-center">Status</th>
+                                                    <th class="text-center">Remarks</th>
+                                                    <th class="text-center">Date Added</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                    <?php
+                                                    if ($getRecordsToday != false) {
+                                                        while($row = mysqli_fetch_assoc($getRecordsToday)) {
+                                                            if ($row['status'] == 'Approved') {
+                                                                $bgColor = 'text-white badge bg-success';
+                                                            }
+                                                            else if ($row['status'] == 'Pending') {
+                                                                $bgColor = 'text-muted badge bg-warning';
+                                                            }
+                                                            else if ($row['status'] == 'Rejected') {
+                                                                $bgColor = 'text-white badge bg-danger';
+                                                            }
+                                                            else {
+                                                                $bgColor = '';
+                                                            }
+                                                    ?>
+
+                                                    <td class="text-center"><?php echo $row['record_ID']?></td>
+                                                    <td class="text-center"><?php echo $row['firstName']?></td>
+                                                    <td class="text-center"><?php echo $row['middleName']?></td>
+                                                    <td class="text-center"><?php echo $row['lastName']?></td>
+                                                    <td class="text-center"><?php echo $row['gender']?></td>
+                                                    <td class="text-center"><?php echo $row['course']?></td>
+                                                    <td class="text-center"><?php echo $row['year']?></td>
+                                                    <td class="text-center"><?php echo $row['section']?></td>
+                                                    <td class="text-center"><?php echo $row['reason']?></td>
+                                                    <td class="text-center"><span class="<?php echo $bgColor ?>"><?php echo $row['status']?></span></td>
+                                                    <td class="text-center"><?php echo $row['remarks']?></td>
+                                                    <td class="text-center"><?php echo date('M d Y', strtotime($row['date']))?></td>
+                                                </tr>
+                                                <?php
+                                                    }
+                                                }
+                                                ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Records This Month Table -->
+                        <div class="row mx-auto mb-3">
+                            <div class="card text-center">
+                                <div class="card-header d-flex justify-content-between mb-n5">
+                                    <p class="h3">Records This Month <?php echo '('. date("F, Y") .')'; ?></p>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table table-responsive">
+                                        <table id="month-table" class="table table-striped data-table text-center" style="width: 100%">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">Record ID</th>
+                                                    <th class="text-center">First Name</th>
+                                                    <th class="text-center">Middle Name</th>
+                                                    <th class="text-center">Last Name</th>
+                                                    <th class="text-center">Gender</th>
+                                                    <th class="text-center">Course</th>
+                                                    <th class="text-center">Year</th>
+                                                    <th class="text-center">Section</th>
+                                                    <th class="text-center">Reason</th>
+                                                    <th class="text-center">Status</th>
+                                                    <th class="text-center">Remarks</th>
+                                                    <th class="text-center">Date Added</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                    <?php
+                                                    if ($getRecordsMonth != false) {
+                                                        while($row = mysqli_fetch_assoc($getRecordsMonth)) {
+                                                            if ($row['status'] == 'Approved') {
+                                                                $bgColor = 'text-white badge bg-success';
+                                                            }
+                                                            else if ($row['status'] == 'Pending') {
+                                                                $bgColor = 'text-muted badge bg-warning';
+                                                            }
+                                                            else if ($row['status'] == 'Rejected') {
+                                                                $bgColor = 'text-white badge bg-danger';
+                                                            }
+                                                            else {
+                                                                $bgColor = '';
+                                                            }
+                                                    ?>
+
+                                                    <td class="text-center"><?php echo $row['record_ID']?></td>
+                                                    <td class="text-center"><?php echo $row['firstName']?></td>
+                                                    <td class="text-center"><?php echo $row['middleName']?></td>
+                                                    <td class="text-center"><?php echo $row['lastName']?></td>
+                                                    <td class="text-center"><?php echo $row['gender']?></td>
+                                                    <td class="text-center"><?php echo $row['course']?></td>
+                                                    <td class="text-center"><?php echo $row['year']?></td>
+                                                    <td class="text-center"><?php echo $row['section']?></td>
+                                                    <td class="text-center"><?php echo $row['reason']?></td>
+                                                    <td class="text-center"><span class="<?php echo $bgColor ?>"><?php echo $row['status']?></span></td>
+                                                    <td class="text-center"><?php echo $row['remarks']?></td>
+                                                    <td class="text-center"><?php echo date('M d Y', strtotime($row['date']))?></td>
+                                                </tr>
+                                                <?php
+                                                    }
+                                                }
                                                 ?>
                                             </tbody>
                                         </table>
@@ -558,43 +697,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- --------------------------Recent Records----------------------------
-                        <h3 class="fw-bold fs-4 my-3">Recent Visitor Records</h3>
-
-                        <div class="row">
-                            <div class="col-12">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr class="highlight">
-                                            <th scope="col">#</th>
-                                            <th scope="col">First</th>
-                                            <th scope="col">Last</th>
-                                            <th scope="col">Handle</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <th scope="row">1</th>
-                                            <td>Mark</td>
-                                            <td>Otto</td>
-                                            <td>@mdo</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">2</th>
-                                            <td>Jacob</td>
-                                            <td>Thornton</td>
-                                            <td>@fat</td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">3</th>
-                                            <td colspan="2">Larry the Bird</td>
-                                            <td>@twitter</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div> -->
                     </div>
                 </div>
             </main>

@@ -233,7 +233,7 @@
                                                 <th class="text-center">Year</th>
                                                 <th class="text-center">Section</th>
                                                 <th class="text-center">Reason</th>
-                                                <th class="text-center">Documents</th>
+                                                <th class="text-center">Supporting Document</th>
                                                 <th class="text-center">Status</th>
                                                 <th class="text-center">Remarks</th>
                                                 <th class="text-center">Date Added</th>
@@ -630,7 +630,7 @@
     <script>
         function viewImage(imagePath) {
             Swal.fire({
-                title: "Viewing Document",
+                title: "Viewing Supporting Document",
                 imageUrl: imagePath,
                 imageAlt: "Document Image",
                 showCloseButton: true,

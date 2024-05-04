@@ -245,6 +245,46 @@
             return false;
         }
     }
+
+    function getTodayRecords($conn) {
+        $today = date('Y-m-d');
+        $queryTodayRecords = "SELECT 'leave_of_absence' AS source, record_ID, firstName, middleName, lastName, gender, department AS course, year, section, reason, status, remarks, date FROM leave_of_absence WHERE DATE(date) = '$today'
+        UNION ALL
+        SELECT 'absence_approval_form' AS source, record_ID, firstName, middleName, lastName, gender, course, year, section, reason, status, remarks, date FROM absence_approval_form WHERE DATE(date) = '$today'
+        UNION ALL
+        SELECT 'counselling' AS source, record_ID, firstName, middleName, lastName, gender, course, year, section, reason, status, remarks, date FROM counselling WHERE DATE(date) = '$today'
+        UNION ALL
+        SELECT 'others' AS source, record_ID, firstName, middleName, lastName, gender, course, year, section, reason, status, remarks, date FROM others WHERE DATE(date) = '$today'";
+    
+        $resultTodayRecords = mysqli_query($conn, $queryTodayRecords);
+    
+        if ($resultTodayRecords && mysqli_num_rows($resultTodayRecords) > 0) {
+            return $resultTodayRecords;
+        }
+        else {
+            return false;
+        }
+    }
+
+    function getMonthRecords($conn) {
+        $month = date('M');
+        $queryMonthRecords = "SELECT 'leave_of_absence' AS source, record_ID, firstName, middleName, lastName, gender, department AS course, year, section, reason, status, remarks, date FROM leave_of_absence WHERE MONTH(date) = MONTH(CURDATE()) AND YEAR(date) = YEAR(CURDATE())
+        UNION ALL
+        SELECT 'absence_approval_form' AS source, record_ID, firstName, middleName, lastName, gender, course, year, section, reason, status, remarks, date FROM absence_approval_form WHERE MONTH(date) = MONTH(CURDATE()) AND YEAR(date) = YEAR(CURDATE())
+        UNION ALL
+        SELECT 'counselling' AS source, record_ID, firstName, middleName, lastName, gender, course, year, section, reason, status, remarks, date FROM counselling WHERE MONTH(date) = MONTH(CURDATE()) AND YEAR(date) = YEAR(CURDATE())
+        UNION ALL
+        SELECT 'others' AS source, record_ID, firstName, middleName, lastName, gender, course, year, section, reason, status, remarks, date FROM others WHERE MONTH(date) = MONTH(CURDATE()) AND YEAR(date) = YEAR(CURDATE())";
+
+        $resultMonthRecords = mysqli_query($conn, $queryMonthRecords);
+    
+        if ($resultMonthRecords && mysqli_num_rows($resultMonthRecords) > 0) {
+            return $resultMonthRecords;
+        }
+        else {
+            return false ;
+        }
+    }
     
     function addLeaveRecord($conn) {
         if (isset($_POST['addRecord'])) {

@@ -108,12 +108,6 @@
                                 Others
                             </a>
                         </li>
-
-                        <li class="sidebar-item">
-                            <a href="records-archived.php" class="sidebar-link">
-                                Archived
-                            </a>
-                        </li>
                     </ul>
                 </li>
                 <li class="sidebar-item">
