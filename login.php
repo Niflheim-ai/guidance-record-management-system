@@ -10,6 +10,10 @@
         header("Location: admin.php");
         exit();
     }
+    else if (isset($_SESSION['studentSession'])) {
+        header("Location: studentView.php");
+        exit();
+    }
 
     include('dbConnection.php');
     $feedback = '';
@@ -34,6 +38,23 @@
                     if ($outAdminUsername == $inputUser AND $outAdminPassword == $inputPassword) {
                         $_SESSION['adminSession'] = $inputUser;
                         header("Location: admin.php");
+                        exit();
+                    }
+                }
+
+                // Student Login
+                $queryStudent = mysqli_query($conn, "SELECT * FROM student WHERE KLD_ID = '$inputUser'");
+                $numberStudentQuery = mysqli_num_rows($queryStudent);
+
+                if ($numberStudentQuery > 0) {
+                    while ($row = mysqli_fetch_assoc($queryStudent)) {
+                        $outStudentUsername = $row['kld_id'];
+                        $outStudentPassword = $row['password'];
+                    }
+
+                    if ($outStudentUsername == $inputUser AND password_verify($inputPassword, $outStudentPassword)) {
+                        $_SESSION['studentSession'] = $inputUser;
+                        header("Location: studentView.php");
                         exit();
                     }
                 }
@@ -85,6 +106,12 @@
     <link rel="stylesheet" href="css/login.css">
     <link rel="icon" type="image/x-icon" href="images/kld-logo.png">
     <title>GRMS - Login</title>
+
+    <style>
+        a:hover {
+            color: skyblue;
+        }
+    </style>
 </head>
 <body>
     <!--                    Navbar                 -->
@@ -136,6 +163,7 @@
                             <input type = "password" placeholder = "Password" name = "password">
                             <a href="#">Forgot Password?</a>
                             <button type="submit" id="signinBTN" name="btnLogin">Login</button>
+                            <a href="register.php">Don't have a student account? Click Here</a>
                         </form>
                     </div>
                     <div class="toggle-container">

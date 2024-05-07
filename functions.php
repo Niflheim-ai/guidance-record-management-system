@@ -1550,4 +1550,112 @@
             }
         }
     }
+
+    function createStudentAccount($conn) {
+        if (isset($_POST['btnRegister'])) {
+            if (!empty($_POST['student_username']) OR !empty($_POST['student_password']) OR !empty($_POST['student_firstName']) OR !empty($_POST['student_middleName']) OR !empty($_POST['student_lastName']) OR !empty($_POST['student_course']) OR !empty($_POST['student_section'])) {
+                if (!preg_match('/[\'^$&{}<>;#%`~()-+|?":=!]/', $_POST['student_username'])) {
+
+                    if ($_POST['student_username'] !== 'guidance_admin') {
+                        $inputUsername = $_POST['student_username'];
+                        $inputPassword = $_POST['student_password'];
+                        $inputConfirmPassword = $_POST['student_confirmPassword'];
+                        $inputFirstName = $_POST['student_firstName'];
+                        $inputMiddleName = $_POST['student_middleName'];
+                        $inputLastName = $_POST['student_lastName'];
+                        $inputCourse = $_POST['student_course'];
+                        $inputsection = $_POST['student_section'];
+                        
+                        $checkUsername = mysqli_query($conn, "SELECT * FROM student WHERE KLD_ID = '$inputUsername'");
+                        $numberOfUser = mysqli_num_rows($checkUsername);
+
+                        if ($numberOfUser < 1) {
+                            // Check password match
+                            if ($inputPassword == $inputConfirmPassword) {
+                                $hashPassword = password_hash($inputPassword,  PASSWORD_BCRYPT, array('cost' => 12));
+
+                                $saveRecord = $conn->prepare("INSERT INTO `student` (`KLD_ID`, `firstName`, `middleName`, `lastName`, `course`, `section`, `password`)
+                                VALUES (?, ?, ?, ?, ?, ?, ?)");
+
+                                $saveRecord->bind_param("sssssss", $inputUsername, $inputFirstName, $inputMiddleName, $inputLastName, $inputCourse, $inputsection, $hashPassword);
+
+                                if ($saveRecord->errno) {
+                                    echo '<script>
+                                        Swal.fire({
+                                            title: "Error",
+                                            text: "Account creation failed",
+                                            icon: "error"
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = "register.php";
+                                            }
+                                        });
+                                    </script>';
+                                }
+                                else {
+                                    echo '<script>
+                                        Swal.fire({
+                                            title: "Success",
+                                            text: "Account successfully created",
+                                            icon: "success"
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                window.location.href = "login.php";
+                                            }
+                                        });
+                                    </script>';
+
+                                    $saveRecord->execute();
+                                    $saveRecord->close();
+                                    $conn->close();
+                                }
+                            }
+                            else {
+                                echo '<script>
+                                Swal.fire({
+                                    title: "Error",
+                                    text: "Password did not match",
+                                    icon: "error"
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "register.php";
+                                    }
+                                });
+                            </script>';
+                            }
+                        }
+                    }
+                    else {
+                        echo '<script>
+                            Swal.fire({
+                                title: "Error",
+                                text: "Username already exist",
+                                icon: "error"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = "register.php";
+                                }
+                            });
+                        </script>';
+                    }
+                }
+                else {
+                    echo '<script>
+                        Swal.fire({
+                            title: "Error",
+                            text: "No special characters allowed",
+                            icon: "error"
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "register.php";
+                            }
+                        });
+                    </script>';
+                }
+            }
+            else {
+                echo '<script>alert("fill out all required fields")</script>';
+            }
+        }
+    }
 ?>
